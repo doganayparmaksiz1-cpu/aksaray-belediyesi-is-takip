@@ -81,7 +81,8 @@ const initialData = {
     { id: "stf-14", name: "Emirhan ÜNAL", unit: "Çekim", active: true },
     // Spikerler
     { id: "stf-15", name: "Büşra Seda BOYAR", unit: "Spikerler", active: true },
-    { id: "stf-16", name: "Şirin ERDOĞAN", unit: "Spikerler", active: true }
+    { id: "stf-16", name: "Şirin ERDOĞAN", unit: "Spikerler", active: true },
+    { id: "stf-17", name: "Tolga YALÇINKAYA", unit: "Spikerler", active: true }
   ],
   jobs: [
     {
@@ -280,12 +281,14 @@ function showAppScreen() {
   if (mainApp) mainApp.classList.remove('hidden');
 
   const btnNewJob = document.getElementById('btnHeaderNewJob');
+  const btnAddPerson = document.getElementById('btnHeaderAddPerson');
   const btnAdmin = document.getElementById('btnHeaderAdmin');
   const bannerViewOnly = document.getElementById('viewOnlyAlertBanner');
   const btnEmptyNewJob = document.getElementById('btnEmptyNewJob');
 
   if (appState.isViewOnly) {
     if (btnNewJob) btnNewJob.classList.add('hidden');
+    if (btnAddPerson) btnAddPerson.classList.add('hidden');
     if (btnAdmin) btnAdmin.classList.add('hidden');
     if (bannerViewOnly) bannerViewOnly.classList.remove('hidden');
     if (btnEmptyNewJob) btnEmptyNewJob.classList.add('hidden');
@@ -300,6 +303,7 @@ function showAppScreen() {
     }
   } else {
     if (btnNewJob) btnNewJob.classList.remove('hidden');
+    if (btnAddPerson) btnAddPerson.classList.remove('hidden');
     if (btnAdmin) btnAdmin.classList.remove('hidden');
     if (bannerViewOnly) bannerViewOnly.classList.add('hidden');
     if (btnEmptyNewJob) btnEmptyNewJob.classList.remove('hidden');
@@ -608,18 +612,34 @@ function getJobNewsStaff(job) {
   return news;
 }
 
-// Spikerler: Büşra Seda BOYAR, Şirin ERDOĞAN
-const ALLOWED_SPIKERS = ["Büşra Seda BOYAR", "Şirin ERDOĞAN"];
+// Spikerler: Büşra Seda BOYAR, Şirin ERDOĞAN, Tolga YALÇINKAYA
+const ALLOWED_SPIKERS = ["Büşra Seda BOYAR", "Şirin ERDOĞAN", "Tolga YALÇINKAYA"];
+
+function getSpikerList() {
+  const list = [...ALLOWED_SPIKERS];
+  if (Array.isArray(appState.staff)) {
+    appState.staff.forEach(s => {
+      if (s.active !== false && (s.unit === 'Spikerler' || (s.role && s.role.toLowerCase().includes('spiker')))) {
+        const formatted = formatSurnameUpper(s.name);
+        if (!list.includes(formatted)) {
+          list.push(formatted);
+        }
+      }
+    });
+  }
+  return list;
+}
 
 function getJobSpikers(job) {
   if (Array.isArray(job.spikerStaff) && job.spikerStaff.length > 0) {
     return job.spikerStaff.map(formatSurnameUpper);
   }
   const spikers = [];
+  const spikerList = getSpikerList();
   if (Array.isArray(job.assignedStaff)) {
     job.assignedStaff.forEach(s => {
       const sName = formatSurnameUpper(typeof s === 'string' ? s : s.name);
-      if (ALLOWED_SPIKERS.includes(sName) && !spikers.includes(sName)) {
+      if (spikerList.includes(sName) && !spikers.includes(sName)) {
         spikers.push(sName);
       }
     });
@@ -1449,7 +1469,7 @@ function toggleNewsPerson(name) {
 
 // ----------------------------------------------------
 // SPİKER / SUNUCU EKİBİ
-// Büşra Seda Boyar, Şirin Erdoğan
+// Büşra Seda Boyar, Şirin Erdoğan, Tolga Yalçınkaya
 // ----------------------------------------------------
 function renderSpikerStaffPills() {
   const container = document.getElementById('spikerStaffPillsContainer');
@@ -1458,7 +1478,8 @@ function renderSpikerStaffPills() {
 
   if (countSpan) countSpan.textContent = appState.currentJobSpikers.length;
 
-  container.innerHTML = ALLOWED_SPIKERS.map(name => {
+  const spikers = getSpikerList();
+  container.innerHTML = spikers.map(name => {
     const isSelected = appState.currentJobSpikers.includes(name);
     const activeClass = isSelected 
       ? 'bg-rose-700 text-white border-rose-800 shadow-sm font-bold scale-[1.02]' 
@@ -1792,9 +1813,11 @@ async function handleAddNewStaffSimple() {
     return;
   }
 
+  const formattedName = formatSurnameUpper(name);
+
   const newStaff = {
     id: 'stf-' + Date.now(),
-    name,
+    name: formattedName,
     unit: 'Ekip',
     active: true
   };
@@ -1814,6 +1837,7 @@ async function handleAddNewStaffSimple() {
   await persistState();
   nameInput.value = '';
   renderSimpleStaffList();
+  renderAddPersonModalStaffList();
   initDropdowns();
   renderApp();
 }
@@ -1831,8 +1855,217 @@ async function handleDeleteStaff(staffId) {
 
   await persistState();
   renderSimpleStaffList();
+  renderAddPersonModalStaffList();
   initDropdowns();
   renderApp();
+}
+
+// ----------------------------------------------------
+// DOĞRUDAN KİŞİ / PERSONEL EKLEME MODALI FONKSİYONLARI
+// ----------------------------------------------------
+function openAddPersonModal() {
+  if (appState.isViewOnly) {
+    alert("⚠️ Personel İzleme Modundasınız.\nKişi ekleme yetkisi sadece Reji ve Müdürlüktedir. Lütfen şifre ile giriş yapınız.");
+    return;
+  }
+  const modal = document.getElementById('addPersonModal');
+  if (!modal) return;
+
+  const nameInput = document.getElementById('newPersonFullName');
+  const roleInput = document.getElementById('newPersonRole');
+  const unitSelect = document.getElementById('newPersonUnit');
+
+  if (nameInput) nameInput.value = '';
+  if (roleInput) roleInput.value = '';
+  if (unitSelect) unitSelect.value = 'Spikerler';
+
+  renderAddPersonModalStaffList();
+  modal.classList.remove('hidden');
+  if (window.lucide) lucide.createIcons();
+
+  setTimeout(() => {
+    if (nameInput) nameInput.focus();
+  }, 100);
+}
+
+function closeAddPersonModal() {
+  const modal = document.getElementById('addPersonModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function renderAddPersonModalStaffList() {
+  const container = document.getElementById('addPersonModalStaffList');
+  const countSpan = document.getElementById('addPersonModalStaffCount');
+  if (!container) return;
+
+  const staff = appState.staff || [];
+  if (countSpan) countSpan.textContent = `${staff.length} Kişi Kayıtlı`;
+
+  if (staff.length === 0) {
+    container.innerHTML = '<div class="text-xs text-slate-400 text-center py-3">Henüz kayıtlı personel bulunmuyor.</div>';
+    return;
+  }
+
+  // Sort by unit then name
+  const sorted = [...staff].sort((a, b) => {
+    const unitComp = (a.unit || '').localeCompare(b.unit || '', 'tr');
+    if (unitComp !== 0) return unitComp;
+    return (a.name || '').localeCompare(b.name || '', 'tr');
+  });
+
+  container.innerHTML = sorted.map(s => {
+    let badgeColor = 'bg-slate-100 text-slate-700 border-slate-200';
+    let icon = 'user';
+    if (s.unit === 'Spikerler' || (s.role && s.role.toLowerCase().includes('spiker'))) {
+      badgeColor = 'bg-rose-100 text-rose-800 border-rose-200';
+      icon = 'mic';
+    } else if (s.unit === 'Haber') {
+      badgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+      icon = 'newspaper';
+    } else if (s.unit === 'Sosyal Medya') {
+      badgeColor = 'bg-sky-100 text-sky-800 border-sky-200';
+      icon = 'share-2';
+    } else if (s.unit === 'Reji') {
+      badgeColor = 'bg-indigo-100 text-indigo-800 border-indigo-200';
+      icon = 'sliders';
+    } else if (s.unit === 'Çekim') {
+      badgeColor = 'bg-purple-100 text-purple-800 border-purple-200';
+      icon = 'video';
+    } else if (s.unit === 'Müdürlük') {
+      badgeColor = 'bg-amber-100 text-amber-800 border-amber-200';
+      icon = 'crown';
+    }
+
+    return `
+      <div class="flex items-center justify-between p-2.5 bg-slate-50 hover:bg-slate-100/90 rounded-xl border border-slate-200 transition">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="p-1 rounded-lg ${badgeColor} border text-xs shrink-0">
+            <i data-lucide="${icon}" class="w-3.5 h-3.5"></i>
+          </span>
+          <div class="min-w-0">
+            <span class="text-xs font-bold text-slate-800 block truncate">${escapeHtml(s.name)}</span>
+            <span class="text-[10px] text-slate-500 block truncate font-medium">${escapeHtml(s.unit || 'Ekip')}${s.role && s.role !== s.unit ? ' • ' + escapeHtml(s.role) : ''}</span>
+          </div>
+        </div>
+        <button type="button" onclick="handleDeleteStaffFromAddModal('${s.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition shrink-0" title="Kişiyi Sil">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  if (window.lucide) lucide.createIcons();
+}
+
+async function handleDeleteStaffFromAddModal(staffId) {
+  if (appState.isViewOnly) {
+    alert("Yetkiniz bulunmamaktadır.");
+    return;
+  }
+  const staffMember = (appState.staff || []).find(s => s.id === staffId);
+  const name = staffMember ? staffMember.name : "Bu kişiyi";
+  if (!confirm(`"${name}" isimli personeli listeden çıkarmak istediğinize emin misiniz?`)) return;
+
+  appState.staff = (appState.staff || []).filter(s => s.id !== staffId);
+
+  try {
+    if (appState.isApiMode) {
+      await fetch(`/api/staff/${staffId}`, { method: 'DELETE' });
+    }
+  } catch (e) {
+    console.warn("Staff delete error:", e);
+  }
+
+  await persistState();
+  initDropdowns();
+  renderApp();
+  renderSpikerStaffPills();
+  renderShootingCrewPills();
+  renderSimpleStaffList();
+  renderAddPersonModalStaffList();
+}
+
+async function handleSaveNewPersonSubmit(e) {
+  if (e && e.preventDefault) e.preventDefault();
+
+  if (appState.isViewOnly) {
+    alert("⚠️ Personel İzleme Modundasınız. Kişi ekleme yetkisi sadece Reji ve Müdürlüktedir.");
+    return;
+  }
+
+  const nameInput = document.getElementById('newPersonFullName');
+  const unitSelect = document.getElementById('newPersonUnit');
+  const roleInput = document.getElementById('newPersonRole');
+
+  let rawName = nameInput ? nameInput.value.trim() : '';
+  if (!rawName || rawName.length < 2) {
+    alert("Lütfen geçerli bir ad ve soyad giriniz.");
+    if (nameInput) nameInput.focus();
+    return;
+  }
+
+  // Soyisimleri otomatik BÜYÜK yap
+  const formattedName = formatSurnameUpper(rawName);
+  const unit = unitSelect ? unitSelect.value : 'Spikerler';
+  let role = roleInput ? roleInput.value.trim() : '';
+  if (!role) {
+    if (unit === 'Spikerler') role = 'Spiker / Sunucu';
+    else if (unit === 'Çekim') role = 'Kamera / Kurgu';
+    else if (unit === 'Haber') role = 'Muhabir / Editör';
+    else if (unit === 'Sosyal Medya') role = 'Sosyal Medya';
+    else if (unit === 'Reji') role = 'Reji Masası';
+    else role = unit;
+  }
+
+  // Aynı isimde biri var mı kontrol et
+  const existing = (appState.staff || []).find(s => s.name.toLowerCase() === formattedName.toLowerCase());
+  if (existing) {
+    alert(`"${formattedName}" isimli personel zaten listede kayıtlıdır.`);
+    return;
+  }
+
+  const newStaff = {
+    id: 'stf-' + Date.now(),
+    name: formattedName,
+    unit: unit,
+    role: role,
+    canShoot: (unit === 'Çekim' || unit === 'Spikerler'),
+    active: true
+  };
+
+  appState.staff.push(newStaff);
+
+  // Spiker ise ALLOWED_SPIKERS listesine de ekle
+  if (unit === 'Spikerler' && !ALLOWED_SPIKERS.includes(formattedName)) {
+    ALLOWED_SPIKERS.push(formattedName);
+  }
+
+  try {
+    if (appState.isApiMode) {
+      await fetch('/api/staff', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newStaff)
+      });
+    }
+  } catch (err) {
+    console.warn("API staff save error:", err);
+  }
+
+  await persistState();
+
+  if (nameInput) nameInput.value = '';
+  if (roleInput) roleInput.value = '';
+
+  initDropdowns();
+  renderApp();
+  renderSpikerStaffPills();
+  renderShootingCrewPills();
+  renderSimpleStaffList();
+  renderAddPersonModalStaffList();
+
+  alert(`✅ "${formattedName}" (${unit}) başarıyla eklendi!`);
+  closeAddPersonModal();
 }
 
 // ----------------------------------------------------

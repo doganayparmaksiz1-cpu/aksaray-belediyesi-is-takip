@@ -102,6 +102,13 @@
       "unit": "Spikerler",
       "role": "Spiker / Sunucu",
       "active": true
+    },
+    {
+      "id": "stf-17",
+      "name": "Tolga YALÇINKAYA",
+      "unit": "Spikerler",
+      "role": "Spiker / Sunucu",
+      "active": true
     }
   ],
   "jobs": [

@@ -305,6 +305,12 @@
               </button>
             </div>
 
+            <!-- Yeni Kişi / Personel Ekle -->
+            <button id="btnHeaderAddPerson" onclick="openAddPersonModal()" class="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 transition shadow-lg shadow-emerald-950/30" title="Yeni Kişi / Personel Ekle">
+              <i data-lucide="user-plus" class="w-4 h-4 text-white"></i>
+              <span>+ Kişi Ekle</span>
+            </button>
+
             <!-- Yeni İş / Çekim Ekle -->
             <button id="btnHeaderNewJob" onclick="openNewJobModal()" class="px-3.5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 transition shadow-lg shadow-amber-900/40">
               <i data-lucide="plus-circle" class="w-4 h-4 text-white"></i>
@@ -352,7 +358,7 @@
           <div class="flex items-center gap-1.5 bg-rose-500/20 border border-rose-400/30 px-2.5 py-0.5 rounded-lg text-rose-200">
             <i data-lucide="mic" class="w-3.5 h-3.5 text-rose-300"></i>
             <span class="font-bold">Spikerler:</span>
-            <span>Büşra Seda BOYAR • Şirin ERDOĞAN</span>
+            <span>Büşra Seda BOYAR • Şirin ERDOĞAN • Tolga YALÇINKAYA</span>
           </div>
         </div>
         <div class="text-[11px] text-slate-300">
@@ -1417,6 +1423,93 @@
   </div>
 
   <!-- ======================================================== -->
+  <!-- MODAL: YENİ KİŞİ / PERSONEL EKLE (SPİKER, ÇEKİM, HABER VB.) -->
+  <!-- ======================================================== -->
+  <div id="addPersonModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-lg w-full overflow-hidden transform transition-all my-6">
+      
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-r from-emerald-800 via-teal-800 to-aksaray-900 px-6 py-4 text-white flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="p-2 bg-white/10 rounded-xl">
+            <i data-lucide="user-plus" class="w-6 h-6 text-emerald-300"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold">Yeni Kişi / Personel Ekle</h3>
+            <p class="text-xs text-emerald-200">Spiker, Muhabir, Kameraman veya Reji personeli kaydedin</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAddPersonModal()" class="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-4">
+        <form onsubmit="handleSaveNewPersonSubmit(event)" class="space-y-4">
+          
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+              <span>Personelin Adı ve Soyadı <span class="text-rose-500">*</span></span>
+              <span class="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">Soyisim BÜYÜK yapılır</span>
+            </label>
+            <input type="text" id="newPersonFullName" required placeholder="Örn: Tolga Yalçınkaya veya Ali Veli" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:bg-white focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
+            <p class="text-[11px] text-slate-400 mt-1">💡 Not: "Tolga Yalçınkaya" yazsanız bile sistem otomatik olarak "Tolga YALÇINKAYA" olarak kaydeder.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                Birimi / Görev Alanı <span class="text-rose-500">*</span>
+              </label>
+              <select id="newPersonUnit" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:bg-white focus:border-emerald-600">
+                <option value="Spikerler" selected>🎙️ Spikerler / Sunucu</option>
+                <option value="Haber">📰 Haber Ekibi</option>
+                <option value="Sosyal Medya">📱 Sosyal Medya Ekibi</option>
+                <option value="Reji">🎛️ Reji Masası</option>
+                <option value="Çekim">🎥 Çekim (Kamera & Kurgu)</option>
+                <option value="Müdürlük">👑 İş Veren Müdürlük</option>
+                <option value="Ekip">👥 Diğer / Genel Ekip</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                Görevi / Unvanı (Opsiyonel)
+              </label>
+              <input type="text" id="newPersonRole" placeholder="Örn: Spiker / Sunucu, Editör..." class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-800 focus:bg-white focus:border-emerald-600">
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-2 pt-2">
+            <button type="button" onclick="closeAddPersonModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
+              Vazgeç
+            </button>
+            <button type="submit" class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl text-xs font-bold transition shadow-md flex items-center gap-1.5">
+              <i data-lucide="user-check" class="w-4 h-4 text-white"></i>
+              <span>Kaydet ve Sisteme Ekle</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Mevcut Personel Listesi Hızlı Önizleme -->
+        <div class="pt-4 border-t border-slate-200 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5 uppercase tracking-wide">
+              <i data-lucide="users" class="w-3.5 h-3.5 text-slate-500"></i>
+              <span>Kayıtlı Personel & Spikerler</span>
+            </span>
+            <span id="addPersonModalStaffCount" class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full"></span>
+          </div>
+          <div id="addPersonModalStaffList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
   <!-- BAŞKA BİLGİSAYARDAN / TELEFONDAN AÇ MODALI               -->
   <!-- ======================================================== -->
   <div id="phoneConnectModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -1434,42 +1527,39 @@
         </button>
       </div>
 
-      <!-- ÖZEL İSİMLİ LİNK -->
-      <div class="bg-indigo-50 border border-indigo-300 p-4 rounded-2xl text-left space-y-2">
+      <!-- 7/24 BULUT CANLI LİNK (RENDER) -->
+      <div class="bg-emerald-50 border border-emerald-300 p-4 rounded-2xl text-left space-y-2">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-indigo-950 flex items-center gap-1.5 uppercase tracking-wide">
-            <i data-lucide="link" class="w-4 h-4 text-indigo-600"></i>
-            1. İstediğiniz Özel İsimli Link:
+          <span class="text-xs font-bold text-emerald-950 flex items-center gap-1.5 uppercase tracking-wide">
+            <i data-lucide="cloud" class="w-4 h-4 text-emerald-600"></i>
+            7/24 Kesintisiz Canlı Sistem Adresi:
           </span>
-          <span class="text-[10px] bg-indigo-200 text-indigo-900 font-bold px-2 py-0.5 rounded-full">Özel Ad</span>
+          <span class="text-[10px] bg-emerald-200 text-emerald-900 font-bold px-2 py-0.5 rounded-full">Bulut Canlı</span>
         </div>
-        <p class="text-xs text-indigo-900 leading-relaxed">
-          Tam istediğiniz <b>Aksaray Belediyesi İş Takip</b> özel bağlantısı:
+        <p class="text-xs text-emerald-900 leading-relaxed">
+          Tüm telefonlardan, tabletlerden ve bilgisayarlardan direkt açılan resmi canlı adres:
         </p>
-        <div class="p-3 bg-slate-900 text-amber-300 rounded-xl font-mono text-xs font-bold border border-slate-700 flex items-center justify-between gap-2">
-          <span class="truncate select-all">https://aksaray-belediyesi-is-takip.loca.lt</span>
-          <button type="button" onclick="navigator.clipboard.writeText('https://aksaray-belediyesi-is-takip.loca.lt'); alert('✅ Özel isimli link kopyalandı:\nhttps://aksaray-belediyesi-is-takip.loca.lt\n\n(Not: İlk defa açarken güvenlik onayı sorarsa onay IP: 5.25.159.188)');" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg text-xs font-bold shrink-0 transition flex items-center gap-1">
+        <div class="p-3 bg-slate-900 text-emerald-400 rounded-xl font-mono text-xs font-bold border border-slate-700 flex items-center justify-between gap-2">
+          <span class="truncate select-all">https://aksaray-belediyesi-is-takip.onrender.com</span>
+          <button type="button" onclick="navigator.clipboard.writeText('https://aksaray-belediyesi-is-takip.onrender.com'); alert('✅ Canlı link kopyalandı:\nhttps://aksaray-belediyesi-is-takip.onrender.com');" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shrink-0 transition flex items-center gap-1">
             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
             <span>Kopyala</span>
           </button>
         </div>
-        <p class="text-[11px] text-indigo-700 italic">
-          * İlk kez açarken ekranda "Click to Submit" veya onay IP'si isterse: <b>5.25.159.188</b> yazıp bir kez tıklamanız yeterlidir.
-        </p>
       </div>
 
-      <!-- ALTERNATİF DİREKT AÇILAN LİNK -->
-      <div class="bg-emerald-50 border border-emerald-300 p-3.5 rounded-2xl text-left space-y-2">
+      <!-- ALTERNATİF BAĞLANTI LİNKİ -->
+      <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-2xl text-left space-y-2">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-emerald-950 flex items-center gap-1.5 uppercase tracking-wide">
-            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
-            2. Alternatif Doğrudan Açılan Link:
+          <span class="text-xs font-bold text-indigo-950 flex items-center gap-1.5 uppercase tracking-wide">
+            <i data-lucide="link" class="w-4 h-4 text-indigo-600"></i>
+            Alternatif Hızlı Bağlantı:
           </span>
-          <span class="text-[10px] bg-emerald-200 text-emerald-900 font-bold px-2 py-0.5 rounded-full">Onaysız Direkt</span>
+          <span class="text-[10px] bg-indigo-200 text-indigo-900 font-bold px-2 py-0.5 rounded-full">Alternatif</span>
         </div>
-        <div class="p-2.5 bg-slate-900 text-emerald-400 rounded-xl font-mono text-xs font-bold border border-slate-700 flex items-center justify-between gap-2">
+        <div class="p-2.5 bg-slate-900 text-amber-300 rounded-xl font-mono text-xs font-bold border border-slate-700 flex items-center justify-between gap-2">
           <span class="truncate select-all">https://inspections-timely-medicines-forget.trycloudflare.com</span>
-          <button type="button" onclick="navigator.clipboard.writeText('https://inspections-timely-medicines-forget.trycloudflare.com'); alert('✅ Canlı link kopyalandı:\nhttps://inspections-timely-medicines-forget.trycloudflare.com');" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shrink-0 transition flex items-center gap-1">
+          <button type="button" onclick="navigator.clipboard.writeText('https://inspections-timely-medicines-forget.trycloudflare.com'); alert('✅ Alternatif link kopyalandı:\nhttps://inspections-timely-medicines-forget.trycloudflare.com');" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg text-xs font-bold shrink-0 transition flex items-center gap-1">
             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
             <span>Kopyala</span>
           </button>

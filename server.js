@@ -34,7 +34,8 @@ const defaultData = {
     { id: "stf-13", name: "Kamilla", role: "Prodüksiyon & Çekim", unit: "Çekim Ekibi", canShoot: true, active: true },
     { id: "stf-14", name: "Emirhan ÜNAL", role: "Drone Operatörü & Kamera", unit: "Çekim Ekibi", canShoot: true, active: true },
     { id: "stf-15", name: "Büşra Seda BOYAR", role: "Spiker / Sunucu", unit: "Spikerler", canShoot: true, active: true },
-    { id: "stf-16", name: "Şirin ERDOĞAN", role: "Spiker / Sunucu", unit: "Spikerler", canShoot: true, active: true }
+    { id: "stf-16", name: "Şirin ERDOĞAN", role: "Spiker / Sunucu", unit: "Spikerler", canShoot: true, active: true },
+    { id: "stf-17", name: "Tolga YALÇINKAYA", role: "Spiker / Sunucu", unit: "Spikerler", canShoot: true, active: true }
   ],
   jobs: [],
   reports: {}
