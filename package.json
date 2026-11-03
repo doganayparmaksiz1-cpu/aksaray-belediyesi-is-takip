@@ -1,0 +1,25 @@
+{
+  "name": "aksaray-belediyesi-is-takip",
+  "version": "1.0.0",
+  "description": "Aksaray Belediyesi Basın Yayın ve Halkla İlişkiler Müdürlüğü Medya & Prodüksiyon İş Takip ve Gün Raporu Sistemi",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "aksaray",
+    "belediye",
+    "is-takip",
+    "medya",
+    "produksiyon",
+    "gun-raporu"
+  ],
+  "author": "Aksaray Belediyesi",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "localtunnel": "^2.0.2",
+    "qrcode": "^1.5.4"
+  }
+}

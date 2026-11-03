@@ -1,0 +1,308 @@
+{
+  "adminPassword": "basin68",
+  "departments": [
+    "Hasan Hüseyin AKSAY (Müdür)",
+    "Bahtiyar BAKAR (Müdür)"
+  ],
+  "staff": [
+    {
+      "id": "stf-1",
+      "name": "Serdar YALÇINKAYA",
+      "unit": "Haber",
+      "active": true
+    },
+    {
+      "id": "stf-2",
+      "name": "Bayram SATILMIŞ",
+      "unit": "Haber",
+      "active": true
+    },
+    {
+      "id": "stf-3",
+      "name": "Hasan TEVATIR",
+      "unit": "Haber",
+      "active": true
+    },
+    {
+      "id": "stf-4",
+      "name": "Rabia ÖZKAYA",
+      "unit": "Sosyal Medya",
+      "active": true
+    },
+    {
+      "id": "stf-5",
+      "name": "Muharrem SELÇUK",
+      "unit": "Sosyal Medya",
+      "active": true
+    },
+    {
+      "id": "stf-6",
+      "name": "Tamer Efe ÇAR",
+      "unit": "Sosyal Medya",
+      "active": true
+    },
+    {
+      "id": "stf-7",
+      "name": "Levent AKYAYLA",
+      "unit": "Reji",
+      "active": true
+    },
+    {
+      "id": "stf-8",
+      "name": "Ahmet Can UYAR",
+      "unit": "Reji",
+      "active": true
+    },
+    {
+      "id": "stf-9",
+      "name": "Serhat IŞIKTAN",
+      "unit": "Reji",
+      "active": true
+    },
+    {
+      "id": "stf-10",
+      "name": "Doğanay PARMAKSIZ",
+      "unit": "Çekim",
+      "active": true
+    },
+    {
+      "id": "stf-11",
+      "name": "Asude ÖZTÜRK",
+      "unit": "Çekim",
+      "active": true
+    },
+    {
+      "id": "stf-12",
+      "name": "Oktay İNCE",
+      "unit": "Çekim",
+      "active": true
+    },
+    {
+      "id": "stf-13",
+      "name": "Kamilla",
+      "unit": "Çekim",
+      "active": true
+    },
+    {
+      "id": "stf-14",
+      "name": "Emirhan ÜNAL",
+      "unit": "Çekim",
+      "active": true
+    },
+    {
+      "id": "stf-15",
+      "name": "Büşra Seda BOYAR",
+      "unit": "Spikerler",
+      "role": "Spiker / Sunucu",
+      "active": true
+    },
+    {
+      "id": "stf-16",
+      "name": "Şirin ERDOĞAN",
+      "unit": "Spikerler",
+      "role": "Spiker / Sunucu",
+      "active": true
+    }
+  ],
+  "jobs": [
+    {
+      "id": "job-1792666502561",
+      "date": "2026-10-22",
+      "createdAt": "2026-10-22T10:55:02.561Z",
+      "title": "AKMEK Tanıtım",
+      "category": "Haber & Video",
+      "employer": "Hasan Hüseyin AKSAY (Müdür)",
+      "rejiStaff": "Levent AKYAYLA",
+      "location": "AKMEK YENİ BİNA",
+      "notes": "",
+      "status": "Teslim Edildi",
+      "urgency": "Normal",
+      "shootingCrew": [
+        "Ahmet Can UYAR",
+        "Oktay İNCE"
+      ],
+      "editorStaff": [
+        "Levent AKYAYLA"
+      ],
+      "newsStaff": [
+        "Bayram SATILMIŞ"
+      ],
+      "assignedStaff": [
+        {
+          "name": "Levent AKYAYLA",
+          "role": "Kurgu & Montaj"
+        },
+        {
+          "name": "Bayram SATILMIŞ",
+          "role": "Haber"
+        }
+      ],
+      "timeRequested": "08:52",
+      "timeDeparted": "10:00",
+      "timeFootageDelivered": "12:15",
+      "timeEditDelivered": "15:15",
+      "timeRevision": "15:17",
+      "timeOutput": "15:20",
+      "updatedAt": "2026-10-22T10:55:02.561Z"
+    },
+    {
+      "id": "job-1792650610973",
+      "date": "2026-10-22",
+      "createdAt": "2026-10-22T06:30:10.973Z",
+      "title": "kitap günleri çekimi",
+      "category": "Reels / Sosyal Medya",
+      "employer": "Bahtiyar BAKAR (Müdür)",
+      "rejiStaff": "Levent AKYAYLA",
+      "location": "kitap günleri yeri",
+      "notes": "bahtiyar müdürün emriyle çekildi",
+      "status": "Planlanıyor",
+      "urgency": "Orta",
+      "shootingCrew": [
+        "Oktay İNCE",
+        "Rabia ÖZKAYA",
+        "Kamilla"
+      ],
+      "assignedStaff": [],
+      "timeRequested": "09:28",
+      "timeDeparted": "10:25",
+      "timeFootageDelivered": "13:00",
+      "timeEditDelivered": "15:00",
+      "timeRevision": "15:50",
+      "timeOutput": "16:00",
+      "updatedAt": "2026-10-22T06:30:10.973Z"
+    },
+    {
+      "id": "job-101",
+      "title": "Millet Bahçesi Fidan Dikim Töreni ve Başkan Röportajı",
+      "employer": "Hasan Hüseyin AKSAY (Müdür)",
+      "rejiStaff": "Levent AKYAYLA",
+      "category": "Haber & Video",
+      "location": "Aksaray Millet Bahçesi",
+      "shootingCrew": [
+        "Doğanay PARMAKSIZ",
+        "Hasan TEVATIR",
+        "Emirhan ÜNAL"
+      ],
+      "assignedStaff": [
+        {
+          "id": "stf-1",
+          "name": "Serdar YALÇINKAYA",
+          "role": "Haber"
+        },
+        {
+          "id": "stf-7",
+          "name": "Levent AKYAYLA",
+          "role": "Reji"
+        },
+        {
+          "id": "stf-4",
+          "name": "Rabia ÖZKAYA",
+          "role": "Sosyal Medya"
+        }
+      ],
+      "timeRequested": "09:30",
+      "timeDeparted": "09:55",
+      "timeFootageDelivered": "12:15",
+      "timeEditDelivered": "14:30",
+      "timeRevision": "15:00",
+      "timeOutput": "15:45",
+      "urgency": "Yüksek",
+      "status": "Teslim Edildi",
+      "date": "2026-10-22",
+      "notes": "Hasan Hüseyin Aksay Müdürümüzün koordinasyonunda çekim tamamlandı ve yayınlandı.",
+      "createdAt": "2026-10-22T08:00:00.000Z"
+    },
+    {
+      "id": "job-102",
+      "title": "Somuncu Baba Külliyesi Çevre Düzenlemesi Sahası Takip ve Röportaj",
+      "employer": "Bahtiyar BAKAR (Müdür)",
+      "rejiStaff": "Ahmet Can UYAR",
+      "category": "Saha Haberi",
+      "location": "Somuncu Baba Külliyesi",
+      "shootingCrew": [
+        "Oktay İNCE",
+        "Asude ÖZTÜRK",
+        "Rabia ÖZKAYA"
+      ],
+      "assignedStaff": [
+        {
+          "id": "stf-2",
+          "name": "Bayram SATILMIŞ",
+          "role": "Haber Metni"
+        },
+        {
+          "id": "stf-8",
+          "name": "Ahmet Can UYAR",
+          "role": "Reji Montaj"
+        },
+        {
+          "id": "stf-5",
+          "name": "Muharrem SELÇUK",
+          "role": "Sosyal Medya"
+        }
+      ],
+      "timeRequested": "11:00",
+      "timeDeparted": "11:20",
+      "timeFootageDelivered": "13:45",
+      "timeEditDelivered": "",
+      "timeRevision": "",
+      "timeOutput": "",
+      "urgency": "Orta",
+      "status": "Kurguda",
+      "date": "2026-10-22",
+      "notes": "Bahtiyar Bakar Müdürümüzün talimatıyla çekildi, montaj sürüyor.",
+      "createdAt": "2026-10-22T08:15:00.000Z"
+    },
+    {
+      "id": "job-103",
+      "title": "Aksaray Bilim Merkezi Gençlik Çalıştayı Çekimleri ve Canlı Yayın",
+      "employer": "Hasan Hüseyin AKSAY (Müdür)",
+      "rejiStaff": "Serhat IŞIKTAN",
+      "category": "Canlı Yayın & Çekim",
+      "location": "Aksaray Bilim Merkezi",
+      "shootingCrew": [
+        "Kamilla",
+        "Doğanay PARMAKSIZ",
+        "Tamer Efe ÇAR"
+      ],
+      "assignedStaff": [
+        {
+          "id": "stf-9",
+          "name": "Serhat IŞIKTAN",
+          "role": "Reji"
+        },
+        {
+          "id": "stf-6",
+          "name": "Tamer Efe ÇAR",
+          "role": "Sosyal Medya"
+        },
+        {
+          "id": "stf-1",
+          "name": "Serdar YALÇINKAYA",
+          "role": "Haber"
+        }
+      ],
+      "timeRequested": "14:00",
+      "timeDeparted": "14:15",
+      "timeFootageDelivered": "",
+      "timeEditDelivered": "",
+      "timeRevision": "",
+      "timeOutput": "",
+      "urgency": "Normal",
+      "status": "Sahada",
+      "date": "2026-10-22",
+      "notes": "Reji: Serhat Işıktan saatleri girdi.",
+      "createdAt": "2026-10-22T08:30:00.000Z"
+    }
+  ],
+  "reports": {
+    "2026-10-22": {
+      "date": "2026-10-22",
+      "summaryNote": "Bugün Hasan Hüseyin Aksay ve Bahtiyar Bakar müdürlerimizin koordinasyonunda Reji ekibimiz tüm saha çekimlerini ve yayın saatlerini takip etmiştir.",
+      "pendingNote": "Somuncu Baba sahasının kurgusu yarın sabah teslim edilecektir.",
+      "issuesNote": "Tüm ekipmanlar eksiksiz ve çalışır vaziyettedir.",
+      "preparedBy": "Reji Koordinasyonu",
+      "updatedAt": "2026-10-22T10:27:47.773Z"
+    }
+  }
+}
