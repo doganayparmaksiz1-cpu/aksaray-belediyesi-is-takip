@@ -904,10 +904,10 @@ function renderTable() {
 
     return `
       <tr id="jobRow-${job.id}" class="hover:bg-slate-50/90 transition border-b border-slate-100">
-        <td class="py-3.5 px-4 text-center font-mono text-xs text-slate-400">${index + 1}</td>
+        <td class="py-3 px-3 text-center font-mono text-xs text-slate-400">${index + 1}</td>
         
-        <!-- İş Tanımı -->
-        <td class="py-3.5 px-4">
+        <!-- 1. İş Tanımı & Detay -->
+        <td class="py-3 px-3">
           <div class="font-bold text-slate-900 leading-snug">${escapeHtml(job.title)}</div>
           <div class="flex flex-wrap items-center gap-1.5 mt-1">
             <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-aksaray-50 text-aksaray-700 border border-aksaray-200">
@@ -924,8 +924,18 @@ function renderTable() {
           ${job.notes ? `<div class="text-[11px] text-slate-500 mt-1 italic line-clamp-1">${escapeHtml(job.notes)}</div>` : ''}
         </td>
 
-        <!-- İş Veren Müdür & Reji Sorumlusu -->
-        <td class="py-3.5 px-4">
+        <!-- 2. İŞ DURUMU (PLANLANIYOR, TESLİM EDİLDİ VB. - SAYFAYI KAYDIRMA GEREKTİRMEDEN HEMEN BAŞTA) -->
+        <td class="py-3 px-3 text-center bg-amber-50/25 border-x border-amber-100/70">
+          ${statusSelect}
+        </td>
+
+        <!-- 3. Aciliyet -->
+        <td class="py-3 px-3 text-center">
+          ${urgencyBadge}
+        </td>
+
+        <!-- 4. İş Veren Müdür & Reji Sorumlusu -->
+        <td class="py-3 px-3">
           <div>
             <span class="inline-flex items-center gap-1 font-bold text-slate-900 text-xs bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
               <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-600"></i>
@@ -939,44 +949,34 @@ function renderTable() {
           <div class="text-[10px] text-slate-400 mt-0.5">${formatDateTr(job.date)}</div>
         </td>
 
-        <!-- Çekim Ekibi (Kim Çekti?) -->
-        <td class="py-3.5 px-4">
-          <div class="flex flex-wrap gap-1 max-w-[190px]">
+        <!-- 5. Çekim Ekibi (Kim Çekti?) -->
+        <td class="py-3 px-3">
+          <div class="flex flex-wrap gap-1 max-w-[160px]">
             ${shootingBadges}
           </div>
         </td>
 
-        <!-- Kurgu ve Montaj (SADECE LEVENT, SERHAT, AHMETCAN) -->
-        <td class="py-3.5 px-4">
-          <div class="flex flex-wrap gap-1 max-w-[170px]">
+        <!-- 6. Kurgu ve Montaj (SADECE LEVENT, SERHAT, AHMETCAN) -->
+        <td class="py-3 px-3">
+          <div class="flex flex-wrap gap-1 max-w-[150px]">
             ${editorBadges}
           </div>
         </td>
 
-        <!-- Haber Ekibi -->
-        <td class="py-3.5 px-4">
-          <div class="flex flex-wrap gap-1 max-w-[170px]">
+        <!-- 7. Haber Ekibi -->
+        <td class="py-3 px-3">
+          <div class="flex flex-wrap gap-1 max-w-[150px]">
             ${newsBadges}
           </div>
         </td>
 
-        <!-- Saat Çizelgesi (Sade ve Net) -->
-        <td class="py-3.5 px-4">
+        <!-- 8. Saat Çizelgesi (Sade ve Net) -->
+        <td class="py-3 px-3">
           ${timelineHtml}
         </td>
 
-        <!-- Aciliyet -->
-        <td class="py-3.5 px-4 text-center">
-          ${urgencyBadge}
-        </td>
-
-        <!-- İş Durumu -->
-        <td class="py-3.5 px-4 text-center">
-          ${statusSelect}
-        </td>
-
-        <!-- İşlem -->
-        <td class="py-3.5 px-4 text-right whitespace-nowrap">
+        <!-- 9. İşlem -->
+        <td class="py-3 px-3 text-right whitespace-nowrap">
           ${appState.isViewOnly ? `
             <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-500 border border-slate-200 shadow-2xs" title="İzleme Modu (Düzenlenemez)">
               <i data-lucide="lock" class="w-3 h-3 text-slate-400"></i>
@@ -2409,10 +2409,157 @@ async function saveDailyReportManual() {
   alert(`✅ ${formatDateTr(date)} tarihli Gün Faaliyet Raporu başarıyla kaydedildi!`);
 }
 
+function getDailyReportPrintHtml(date) {
+  const dayJobs = (appState.jobs || []).filter(j => j.date === date);
+  const rep = (appState.reports && appState.reports[date]) || {};
+
+  // Form alanlarında anlık yazılan notları öncelikli al
+  const summaryNote = (document.getElementById('repSummaryNote')?.value || '').trim() || rep.summaryNote || '';
+  const pendingNote = (document.getElementById('repPendingNote')?.value || '').trim() || rep.pendingNote || '';
+  const issuesNote = (document.getElementById('repIssuesNote')?.value || '').trim() || rep.issuesNote || '';
+  const preparedBy = (document.getElementById('repPreparedBy')?.value || '').trim() || rep.preparedBy || `Reji: ${appState.activeRejiOperator}`;
+
+  const completedCount = dayJobs.filter(j => j.status === 'Teslim Edildi').length;
+  const inProgressCount = dayJobs.filter(j => j.status !== 'Teslim Edildi').length;
+  const urgentCount = dayJobs.filter(j => j.urgency === 'Çok Acil' || j.urgency === 'Yüksek').length;
+
+  return `
+    <div style="font-family: Arial, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #0f172a; max-width: 920px; margin: 0 auto; padding: 10px;">
+      
+      <!-- BAŞLIK & ANTET -->
+      <div style="text-align: center; border-bottom: 3px solid #005b7a; padding-bottom: 12px; margin-bottom: 14px;">
+        <div style="font-size: 11px; font-weight: 800; color: #d97706; letter-spacing: 2px; text-transform: uppercase;">T.C. AKSARAY BELEDİYE BAŞKANLIĞI</div>
+        <div style="font-size: 16px; font-weight: 900; color: #005b7a; margin-top: 4px;">Basın Yayın ve Halkla İlişkiler Müdürlüğü • Reji Servisi</div>
+        <div style="font-size: 13px; font-weight: 700; color: #b45309; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px;">GÜNLÜK MEDYA, ÇEKİM VE REJİ FAALİYET RAPORU</div>
+      </div>
+
+      <!-- BİLGİ ŞERİDİ -->
+      <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 14px; margin-bottom: 14px; font-size: 11px;">
+        <div><b>📅 TARİH:</b> <span style="color: #005b7a; font-weight: bold;">${formatDateTr(date)}</span></div>
+        <div><b>👔 İŞ VEREN MÜDÜRLER:</b> Hasan Hüseyin AKSAY • Bahtiyar BAKAR</div>
+        <div><b>🎛️ REJİ:</b> <span style="color: #1e3a8a; font-weight: bold;">${escapeHtml(appState.activeRejiOperator)}</span></div>
+      </div>
+
+      <!-- İSTATİSTİK ÖZETİ -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; text-align: center;">
+        <div style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 8px;">
+          <div style="font-size: 9px; color: #475569; font-weight: bold; text-transform: uppercase;">Toplam İş</div>
+          <div style="font-size: 16px; font-weight: 900; color: #0f172a;">${dayJobs.length}</div>
+        </div>
+        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 6px; padding: 6px 8px;">
+          <div style="font-size: 9px; color: #047857; font-weight: bold; text-transform: uppercase;">Teslim Edilen / Yayın</div>
+          <div style="font-size: 16px; font-weight: 900; color: #047857;">${completedCount}</div>
+        </div>
+        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 6px 8px;">
+          <div style="font-size: 9px; color: #b45309; font-weight: bold; text-transform: uppercase;">Sahada / Kurguda</div>
+          <div style="font-size: 16px; font-weight: 900; color: #b45309;">${inProgressCount}</div>
+        </div>
+        <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 6px; padding: 6px 8px;">
+          <div style="font-size: 9px; color: #be123c; font-weight: bold; text-transform: uppercase;">Acil / Flaş İşler</div>
+          <div style="font-size: 16px; font-weight: 900; color: #be123c;">${urgentCount}</div>
+        </div>
+      </div>
+
+      <!-- 1. GÜNÜN GENEL FAALİYET ÖZETİ -->
+      <div style="margin-bottom: 14px; padding: 10px 14px; background: #f8fafc; border-left: 4px solid #005b7a; border-radius: 0 8px 8px 0; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">
+        <div style="font-size: 11px; font-weight: bold; color: #005b7a; margin-bottom: 4px; text-transform: uppercase;">1. GÜNÜN GENEL FAALİYET DEĞERLENDİRMESİ:</div>
+        <div style="font-size: 11px; line-height: 1.5; color: #334155; white-space: pre-wrap;">${summaryNote ? escapeHtml(summaryNote) : '<span style="color: #94a3b8; font-style: italic;">Bugün için girilmiş özel bir özet notu bulunmuyor.</span>'}</div>
+      </div>
+
+      <!-- 2. PRODÜKSİYON, ÇEKİM VE KURGU ÇİZELGESİ -->
+      <div style="margin-bottom: 14px;">
+        <div style="font-size: 11px; font-weight: bold; color: #0f172a; margin-bottom: 6px; text-transform: uppercase;">2. ÇEKİM, KURGU VE YAYIN ÇİZELGESİ:</div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+          <thead>
+            <tr style="background: #e2e8f0;">
+              <th style="border: 1px solid #94a3b8; padding: 6px 8px; text-align: left; width: 22%;">İş Tanımı</th>
+              <th style="border: 1px solid #94a3b8; padding: 6px 8px; text-align: left; width: 14%;">İş Veren Müdür</th>
+              <th style="border: 1px solid #94a3b8; padding: 6px 8px; text-align: left; width: 13%;">Spiker</th>
+              <th style="border: 1px solid #94a3b8; padding: 6px 8px; text-align: left; width: 13%;">Kurgu / Montaj</th>
+              <th style="border: 1px solid #94a3b8; padding: 6px 8px; text-align: left; width: 13%;">Haber Ekibi</th>
+              <th style="border: 1px solid #94a3b8; padding: 6px 8px; text-align: left; width: 13%;">Çekim Ekibi</th>
+              <th style="border: 1px solid #94a3b8; padding: 6px 8px; text-align: center; width: 12%;">İstendi ➔ Çıktı</th>
+              <th style="border: 1px solid #94a3b8; padding: 6px 8px; text-align: center; width: 10%;">Durum</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${dayJobs.length === 0 ? `
+              <tr>
+                <td colspan="8" style="border: 1px solid #cbd5e1; padding: 14px; text-align: center; color: #94a3b8; font-style: italic;">Bu tarihe ait kayıtlı iş bulunmamaktadır.</td>
+              </tr>
+            ` : dayJobs.map((j, idx) => {
+              const editors = getJobEditorStaff(j).join(', ') || '-';
+              const news = getJobNewsStaff(j).join(', ') || '-';
+              const spikers = getJobSpikers(j).join(', ') || '-';
+              const shooting = (j.shootingCrew || []).join(', ') || '-';
+              const bg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+              return `
+                <tr style="background: ${bg};">
+                  <td style="border: 1px solid #cbd5e1; padding: 5px 7px; font-weight: bold; color: #0f172a;">
+                    ${escapeHtml(j.title)}
+                    ${j.category ? `<div style="font-size: 9px; color: #64748b; font-weight: normal;">${escapeHtml(j.category)}</div>` : ''}
+                  </td>
+                  <td style="border: 1px solid #cbd5e1; padding: 5px 7px; font-weight: bold; color: #92400e;">${escapeHtml(j.employer || '-')}</td>
+                  <td style="border: 1px solid #cbd5e1; padding: 5px 7px; color: #be123c; font-weight: bold;">${escapeHtml(spikers)}</td>
+                  <td style="border: 1px solid #cbd5e1; padding: 5px 7px; color: #6b21a8; font-weight: 600;">${escapeHtml(editors)}</td>
+                  <td style="border: 1px solid #cbd5e1; padding: 5px 7px; color: #047857; font-weight: 600;">${escapeHtml(news)}</td>
+                  <td style="border: 1px solid #cbd5e1; padding: 5px 7px; color: #1e3a8a; font-weight: 600;">${escapeHtml(shooting)}</td>
+                  <td style="border: 1px solid #cbd5e1; padding: 5px 7px; text-align: center; font-family: monospace; font-size: 9.5px; white-space: nowrap;">
+                    ${j.timeRequested || '--:--'} &rarr; ${j.timeOutput || '--:--'}
+                  </td>
+                  <td style="border: 1px solid #cbd5e1; padding: 5px 7px; text-align: center; font-weight: bold; font-size: 9.5px;">
+                    ${escapeHtml(j.status || 'Bekliyor')}
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 3. YARINKİ PLANLAMA & 4. AKSAKLIKLAR -->
+      ${pendingNote ? `
+        <div style="margin-bottom: 10px; padding: 8px 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; font-size: 11px;">
+          <b style="color: #166534;">3. YARINKİ PLANLAMA & DEVAM EDEN İŞLER:</b>
+          <div style="color: #14532d; margin-top: 3px; white-space: pre-wrap;">${escapeHtml(pendingNote)}</div>
+        </div>
+      ` : ''}
+
+      ${issuesNote ? `
+        <div style="margin-bottom: 14px; padding: 8px 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; font-size: 11px;">
+          <b style="color: #991b1b;">4. AKSAKLIKLAR & EKİPMAN DURUMU:</b>
+          <div style="color: #7f1d1d; margin-top: 3px; white-space: pre-wrap;">${escapeHtml(issuesNote)}</div>
+        </div>
+      ` : ''}
+
+      <!-- RESMİ İMZA ALANI -->
+      <div style="display: flex; justify-content: space-between; margin-top: 35px; padding: 0 40px; font-size: 11px; text-align: center;">
+        <div style="width: 200px;">
+          <b style="color: #0f172a;">Raporu Düzenleyen</b><br>
+          <span style="font-size: 10px; color: #475569;">${escapeHtml(preparedBy)}</span><br><br><br>
+          <div style="border-top: 1px dashed #94a3b8; padding-top: 4px; font-size: 10px; color: #64748b;">İmza</div>
+        </div>
+        <div style="width: 200px;">
+          <b style="color: #0f172a;">Müdürlük Onayı</b><br>
+          <span style="font-size: 10px; color: #475569;">Hasan Hüseyin AKSAY / Bahtiyar BAKAR</span><br><br><br>
+          <div style="border-top: 1px dashed #94a3b8; padding-top: 4px; font-size: 10px; color: #64748b;">İmza / Mühür</div>
+        </div>
+      </div>
+
+    </div>
+  `;
+}
+
 function copyReportAsWhatsApp() {
   const date = document.getElementById('reportDatePicker').value || getTodayString();
   const dayJobs = appState.jobs.filter(j => j.date === date);
   const rep = appState.reports[date] || {};
+
+  // Formdaki anlık yazılan notları al
+  const summaryNote = (document.getElementById('repSummaryNote')?.value || '').trim() || rep.summaryNote || '';
+  const pendingNote = (document.getElementById('repPendingNote')?.value || '').trim() || rep.pendingNote || '';
+  const issuesNote = (document.getElementById('repIssuesNote')?.value || '').trim() || rep.issuesNote || '';
+  const preparedBy = (document.getElementById('repPreparedBy')?.value || '').trim() || rep.preparedBy || `Reji: ${appState.activeRejiOperator}`;
 
   let msg = `🏛️ *T.C. AKSARAY BELEDİYESİ*\n`;
   msg += `*Basın Yayın & Reji Koordinasyon Masası*\n`;
@@ -2425,8 +2572,8 @@ function copyReportAsWhatsApp() {
   msg += `• Tamamlanan / Yayın: ${dayJobs.filter(j => j.status === 'Teslim Edildi').length}\n`;
   msg += `• Sahada / Kurguda: ${dayJobs.filter(j => j.status !== 'Teslim Edildi').length}\n\n`;
 
-  if (rep.summaryNote) {
-    msg += `📝 *MÜDÜRLÜK DEĞERLENDİRMESİ:*\n${rep.summaryNote}\n\n`;
+  if (summaryNote) {
+    msg += `📝 *MÜDÜRLÜK DEĞERLENDİRMESİ:*\n${summaryNote}\n\n`;
   }
 
   msg += `🎬 *PRODÜKSİYON & ÇEKİM ÇİZELGESİ:*\n`;
@@ -2450,9 +2597,9 @@ function copyReportAsWhatsApp() {
     });
   }
 
-  if (rep.pendingNote) msg += `📌 *YARINKİ PLANLAR:* ${rep.pendingNote}\n\n`;
-  if (rep.issuesNote) msg += `⚠️ *EKİPMAN / NOTLAR:* ${rep.issuesNote}\n\n`;
-  msg += `✍️ *Raporu Düzenleyen:* ${rep.preparedBy || `Reji: ${appState.activeRejiOperator}`}\n`;
+  if (pendingNote) msg += `📌 *YARINKİ PLANLAR:* ${pendingNote}\n\n`;
+  if (issuesNote) msg += `⚠️ *EKİPMAN / NOTLAR:* ${issuesNote}\n\n`;
+  msg += `✍️ *Raporu Düzenleyen:* ${preparedBy}\n`;
   msg += `──────────────────────────────`;
 
   navigator.clipboard.writeText(msg).then(() => {
@@ -2462,83 +2609,140 @@ function copyReportAsWhatsApp() {
   });
 }
 
-function printOfficialReport() {
-  const date = document.getElementById('reportDatePicker').value || getTodayString();
-  const dayJobs = appState.jobs.filter(j => j.date === date);
-  const rep = appState.reports[date] || {};
+async function printOfficialReport() {
+  const date = document.getElementById('reportDatePicker')?.value || getTodayString();
 
+  // 1. Ekrandaki metinleri otomatik olarak kaydet
+  const summaryNote = (document.getElementById('repSummaryNote')?.value || '').trim();
+  const pendingNote = (document.getElementById('repPendingNote')?.value || '').trim();
+  const issuesNote = (document.getElementById('repIssuesNote')?.value || '').trim();
+  const preparedBy = (document.getElementById('repPreparedBy')?.value || '').trim() || `Reji: ${appState.activeRejiOperator}`;
+
+  if (!appState.reports) appState.reports = {};
+  appState.reports[date] = {
+    date,
+    summaryNote,
+    pendingNote,
+    issuesNote,
+    preparedBy,
+    updatedAt: new Date().toISOString()
+  };
+
+  try {
+    if (appState.isApiMode) {
+      fetch('/api/reports', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(appState.reports[date])
+      }).catch(() => {});
+    }
+  } catch (e) {}
+  persistState();
+
+  // 2. Rapor HTML içeriğini oluştur
+  const reportHtml = getDailyReportPrintHtml(date);
+
+  // 3. Fallback olarak ana sayfadaki div'e de doldur
   const printableContainer = document.getElementById('printableDailyReport');
-  printableContainer.innerHTML = `
-    <div style="font-family: Arial, sans-serif; color: #1e293b; padding: 20px;">
-      <div style="text-align: center; border-bottom: 2px solid #005b7a; padding-bottom: 12px; margin-bottom: 16px;">
-        <h2 style="margin: 0; font-size: 18px; font-weight: bold; color: #005b7a;">T.C. AKSARAY BELEDİYE BAŞKANLIĞI</h2>
-        <h3 style="margin: 4px 0 0 0; font-size: 14px; color: #475569;">Basın Yayın & Reji Koordinasyon Servisi</h3>
-        <h4 style="margin: 6px 0 0 0; font-size: 13px; font-weight: bold; color: #d97706; text-transform: uppercase;">GÜNLÜK MEDYA, ÇEKİM VE REJİ FAALİYET RAPORU</h4>
-      </div>
+  if (printableContainer) {
+    printableContainer.innerHTML = reportHtml;
+    printableContainer.style.display = 'block';
+  }
 
-      <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 14px; font-weight: bold;">
-        <span>TARİH: ${formatDateTr(date)}</span>
-        <span>MÜDÜRLER: Hasan Hüseyin Aksay • Bahtiyar Bakar</span>
-      </div>
+  // 4. İzole iframe üzerinden hatasız yazdır (Hiçbir zaman boş sayfa çıkmaz)
+  let printIframe = document.getElementById('aksarayReportPrintIframe');
+  if (!printIframe) {
+    printIframe = document.createElement('iframe');
+    printIframe.id = 'aksarayReportPrintIframe';
+    printIframe.style.position = 'fixed';
+    printIframe.style.right = '0';
+    printIframe.style.bottom = '0';
+    printIframe.style.width = '0';
+    printIframe.style.height = '0';
+    printIframe.style.border = '0';
+    document.body.appendChild(printIframe);
+  }
 
-      <div style="margin-bottom: 14px; padding: 10px; background: #f1f5f9; border-left: 4px solid #005b7a; font-size: 11px;">
-        <b style="color: #005b7a;">1. GÜNÜN GENEL FAALİYET ÖZETİ:</b>
-        <p style="margin: 4px 0 0 0; white-space: pre-line;">${rep.summaryNote || 'Günün genel faaliyet özeti girilmedi.'}</p>
-      </div>
+  const iframeDoc = printIframe.contentWindow.document;
+  iframeDoc.open();
+  iframeDoc.write(`
+    <!DOCTYPE html>
+    <html lang="tr">
+    <head>
+      <meta charset="UTF-8">
+      <title>Aksaray Belediyesi Günlük Rapor - ${formatDateTr(date)}</title>
+      <style>
+        @page { size: A4 portrait; margin: 10mm 12mm; }
+        * { box-sizing: border-box; }
+        body {
+          font-family: Arial, -apple-system, sans-serif;
+          margin: 0;
+          padding: 0;
+          background: #ffffff !important;
+          color: #0f172a !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+      </style>
+    </head>
+    <body>
+      ${reportHtml}
+    </body>
+    </html>
+  `);
+  iframeDoc.close();
 
-      <h5 style="margin: 0 0 6px 0; font-size: 11px; font-weight: bold; color: #1e293b; text-transform: uppercase;">2. ÇEKİM, KURGU VE YAYIN ÇİZELGESİ:</h5>
-      <table style="width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 14px;">
-        <thead>
-          <tr style="background: #e2e8f0;">
-            <th style="border: 1px solid #cbd5e1; padding: 5px; text-align: left;">İş Tanımı</th>
-            <th style="border: 1px solid #cbd5e1; padding: 5px; text-align: left;">İş Veren Müdür</th>
-            <th style="border: 1px solid #cbd5e1; padding: 5px; text-align: left;">Spiker</th>
-            <th style="border: 1px solid #cbd5e1; padding: 5px; text-align: left;">Kurgu & Montaj</th>
-            <th style="border: 1px solid #cbd5e1; padding: 5px; text-align: left;">Haber Ekibi</th>
-            <th style="border: 1px solid #cbd5e1; padding: 5px; text-align: left;">Çekim Ekibi</th>
-            <th style="border: 1px solid #cbd5e1; padding: 5px; text-align: center;">İstenen &rarr; Çıktı Saati</th>
-            <th style="border: 1px solid #cbd5e1; padding: 5px; text-align: center;">Durum</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${dayJobs.map(j => {
-            const editors = getJobEditorStaff(j).join(', ') || '-';
-            const news = getJobNewsStaff(j).join(', ') || '-';
-            const spikers = getJobSpikers(j).join(', ') || '-';
-            return `
-            <tr>
-              <td style="border: 1px solid #cbd5e1; padding: 5px; font-weight: bold;">${escapeHtml(j.title)}</td>
-              <td style="border: 1px solid #cbd5e1; padding: 5px; font-weight: bold; color: #92400e;">${escapeHtml(j.employer)}</td>
-              <td style="border: 1px solid #cbd5e1; padding: 5px; color: #be123c; font-weight: bold;">${escapeHtml(spikers)}</td>
-              <td style="border: 1px solid #cbd5e1; padding: 5px; color: #6b21a8; font-weight: bold;">${escapeHtml(editors)}</td>
-              <td style="border: 1px solid #cbd5e1; padding: 5px; color: #047857; font-weight: bold;">${escapeHtml(news)}</td>
-              <td style="border: 1px solid #cbd5e1; padding: 5px; font-weight: bold; color: #1e3a8a;">${(j.shootingCrew || []).join(', ') || '-'}</td>
-              <td style="border: 1px solid #cbd5e1; padding: 5px; text-align: center; font-family: monospace;">${j.timeRequested || '--:--'} &rarr; ${j.timeOutput || '--:--'}</td>
-              <td style="border: 1px solid #cbd5e1; padding: 5px; text-align: center; font-weight: bold;">${escapeHtml(j.status)}</td>
-            </tr>
-          `}).join('')}
-        </tbody>
-      </table>
+  setTimeout(() => {
+    try {
+      printIframe.contentWindow.focus();
+      printIframe.contentWindow.print();
+    } catch (err) {
+      window.print();
+    }
+  }, 250);
+}
 
-      ${rep.pendingNote ? `<div style="margin-bottom: 10px; font-size: 11px;"><b>3. YARINKİ PLANLAMA:</b> ${escapeHtml(rep.pendingNote)}</div>` : ''}
-      ${rep.issuesNote ? `<div style="margin-bottom: 14px; font-size: 11px; color: #b91c1c;"><b>4. AKSAKLIKLAR & EKİPMAN:</b> ${escapeHtml(rep.issuesNote)}</div>` : ''}
-
-      <div style="display: flex; justify-content: space-between; margin-top: 40px; padding: 0 40px; font-size: 11px; text-align: center;">
-        <div>
-          <b>Raporu Düzenleyen</b><br>
-          <span style="font-size: 10px; color: #64748b;">${escapeHtml(rep.preparedBy || `Reji: ${appState.activeRejiOperator}`)}</span><br><br>
-          İmza: .................................
+function openReportInNewTab() {
+  const date = document.getElementById('reportDatePicker')?.value || getTodayString();
+  const reportHtml = getDailyReportPrintHtml(date);
+  const printWindow = window.open('', '_blank');
+  if (printWindow) {
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html lang="tr">
+      <head>
+        <meta charset="UTF-8">
+        <title>Aksaray Belediyesi Günlük Rapor - ${formatDateTr(date)}</title>
+        <style>
+          @page { size: A4 portrait; margin: 10mm 12mm; }
+          * { box-sizing: border-box; }
+          body {
+            font-family: Arial, -apple-system, sans-serif;
+            margin: 20px auto;
+            max-width: 920px;
+            background: #ffffff;
+            color: #0f172a;
+            padding: 10px;
+          }
+          @media print {
+            body { margin: 0; max-width: 100%; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none !important; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="no-print" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; background: #f1f5f9; padding: 10px 16px; border-radius: 8px;">
+          <span style="font-size: 13px; font-weight: bold; color: #005b7a;">Aksaray Belediyesi Günlük Faaliyet Raporu Önizleme</span>
+          <button onclick="window.print()" style="padding: 8px 18px; background: #005b7a; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer;">
+            🖨️ Yazdır / PDF Olarak Kaydet
+          </button>
         </div>
-        <div>
-          <b>Müdürlük Onayı</b><br>
-          <span style="font-size: 10px; color: #64748b;">Hasan Hüseyin Aksay / Bahtiyar Bakar</span><br><br>
-          İmza: .................................
-        </div>
-      </div>
-    </div>
-  `;
-
-  window.print();
+        ${reportHtml}
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+  }
 }
 
 // ----------------------------------------------------
