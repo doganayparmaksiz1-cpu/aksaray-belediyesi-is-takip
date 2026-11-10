@@ -256,13 +256,15 @@
     
     <!-- TOP HEADER -->
     <header class="bg-gradient-to-r from-aksaray-900 via-aksaray-800 to-aksaray-700 text-white shadow-xl border-b-4 border-amber-500 sticky top-0 z-40">
-      <div class="w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between min-h-[80px] py-2.5 sm:py-3 gap-3 flex-wrap xl:flex-nowrap">
+      <div class="w-full max-w-[1920px] mx-auto px-3 sm:px-6">
+        
+        <!-- 1. ÜST SATIR: Logo, Belediye Başlıkları, Saat/Tarih & Aktif Yetkili (Asla birbirine giremez) -->
+        <div class="flex items-center justify-between py-2 sm:py-2.5 border-b border-white/10 gap-3 flex-wrap">
           
-          <!-- Logo & Title -->
-          <div class="flex items-center space-x-3.5 shrink-0 py-1">
-            <div class="w-12 h-12 shrink-0 p-2 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 flex items-center justify-center shadow-inner">
-              <svg class="w-8 h-8 text-amber-400" viewBox="0 0 100 100" fill="currentColor">
+          <!-- Sol Taraf: Logo ve Belediye Başlıkları -->
+          <div class="flex items-center gap-3 shrink-0">
+            <div class="w-11 h-11 sm:w-12 sm:h-12 shrink-0 p-2 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 flex items-center justify-center shadow-inner">
+              <svg class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400" viewBox="0 0 100 100" fill="currentColor">
                 <polygon points="50,5 63,22 85,15 78,37 95,50 78,63 85,85 63,78 50,95 37,78 15,85 22,63 5,50 22,37 15,15 37,22" fill="#d97706" opacity="0.9"/>
                 <polygon points="50,15 60,28 77,23 72,40 85,50 72,60 77,77 60,72 50,85 40,72 23,77 28,60 15,50 28,40 23,23 40,28" fill="#ffffff"/>
                 <path d="M50 28 L62 55 L38 55 Z" fill="#007096"/>
@@ -270,74 +272,90 @@
                 <path d="M48 60 C53 60 57 64 57 69 C57 74 53 78 48 78 C54 77 56 72 54 67 C53 63 50 61 48 60 Z" fill="#ffffff"/>
               </svg>
             </div>
-            <div class="shrink-0 flex flex-col justify-center">
-              <div class="flex items-center space-x-2 mb-1">
-                <span class="text-[11px] sm:text-xs uppercase tracking-wider font-extrabold px-2.5 py-0.5 rounded-lg bg-amber-500/30 text-amber-300 border border-amber-400/50 whitespace-nowrap shadow-xs">
+            <div class="flex flex-col justify-center">
+              <div class="mb-1">
+                <span class="text-[11px] sm:text-xs uppercase tracking-wider font-extrabold px-3 py-0.5 rounded-lg bg-amber-500/30 text-amber-300 border border-amber-400/50 whitespace-nowrap shadow-xs inline-block">
                   T.C. AKSARAY BELEDİYESİ
                 </span>
-                <span class="text-[11px] sm:text-xs bg-cyan-500/25 text-cyan-200 px-2.5 py-0.5 rounded-lg border border-cyan-400/40 font-bold whitespace-nowrap shadow-xs">
-                  BASIN YAYIN & REJİ SERVİSİ
-                </span>
               </div>
-              <h1 class="text-base sm:text-lg lg:text-xl font-black tracking-tight text-white whitespace-nowrap flex items-center gap-2 leading-tight">
-                <span>Aksaray Belediyesi İş Takip Sistemi</span>
+              <h1 class="text-base sm:text-lg lg:text-xl font-black tracking-tight text-white whitespace-nowrap leading-tight">
+                Aksaray Belediyesi İş Takip Sistemi
               </h1>
             </div>
           </div>
 
-          <!-- Right Controls -->
-          <div class="flex items-center space-x-1.5 sm:space-x-2 flex-wrap xl:flex-nowrap justify-end gap-y-2">
-            <!-- Live Time -->
-            <div class="hidden xl:flex flex-col text-right px-2.5 py-1 bg-black/25 rounded-xl border border-white/10 shrink-0">
-              <span id="liveTime" class="text-xs font-mono font-bold text-amber-300 leading-none">00:00:00</span>
-              <span id="liveDate" class="text-[10px] text-slate-300 mt-0.5 font-medium">--.--.----</span>
+          <!-- Sağ Taraf: Canlı Saat & Tarih ve Reji Bilgisi -->
+          <div class="flex items-center gap-2.5 shrink-0 ml-auto sm:ml-0">
+            <!-- Canlı Saat & Tarih -->
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-black/40 rounded-xl border border-white/15 shadow-inner shrink-0">
+              <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>
+              <div class="flex flex-col text-left">
+                <span id="liveTime" class="text-xs sm:text-sm font-mono font-bold text-amber-300 leading-none">00:00:00</span>
+                <span id="liveDate" class="text-[10px] text-slate-300 mt-0.5 font-medium leading-none">--.--.----</span>
+              </div>
             </div>
 
-            <!-- Gün Raporu Butonu -->
-            <button onclick="openDailyReportModal()" class="px-3 py-2 bg-teal-600/90 hover:bg-teal-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow border border-teal-500/40 shrink-0 whitespace-nowrap" title="Günlük Faaliyet & Çekim Raporu">
-              <i data-lucide="file-text" class="w-4 h-4 text-white"></i>
-              <span class="hidden md:inline">Gün Raporu</span>
-            </button>
-
-            <!-- Diğer Cihazlardan / Telefondan Aç Butonu -->
-            <button onclick="openPhoneConnectModal()" class="px-3 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md border border-blue-400/40 shrink-0 whitespace-nowrap" title="Başka Bilgisayardan veya Telefondan Aç">
-              <i data-lucide="share-2" class="w-4 h-4 text-white"></i>
-              <span class="hidden md:inline">Diğer Cihazlardan Aç</span>
-            </button>
-
-            <!-- Reji Durumu & Çıkış -->
-            <div class="flex items-center space-x-1.5 shrink-0">
-              <div class="bg-indigo-950/60 border border-indigo-400/40 px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-xs text-indigo-200 shrink-0 whitespace-nowrap">
+            <!-- Reji Operatörü & Çıkış Butonu -->
+            <div class="flex items-center gap-1 shrink-0">
+              <div class="bg-indigo-950/70 border border-indigo-400/40 px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-xs text-indigo-200 shrink-0 whitespace-nowrap">
                 <i data-lucide="sliders" class="w-3.5 h-3.5 text-indigo-400"></i>
                 <span>Reji: <b id="headerActiveRejiName" class="text-white">Levent AKYAYLA</b></span>
               </div>
-              <button id="btnHeaderChangePass" onclick="openStandalonePasswordModal()" class="px-3 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow border border-amber-400/40 shrink-0 whitespace-nowrap" title="Reji & Müdür Şifresini Değiştir">
-                <i data-lucide="key" class="w-4 h-4 text-white"></i>
-                <span class="hidden sm:inline">Şifre Değiştir</span>
-              </button>
-              <button id="btnHeaderAdmin" onclick="openAdminPanelModal()" class="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-amber-900/30 shrink-0 whitespace-nowrap" title="Yönetim & Ekipler">
-                <i data-lucide="settings" class="w-4 h-4"></i>
-                <span class="hidden sm:inline">Yönetim</span>
-              </button>
-              <button onclick="logoutToLoginScreen()" class="px-2.5 py-2 bg-rose-600/80 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold transition shrink-0" title="Giriş Ekranına Dön / Çıkış">
+              <button onclick="logoutToLoginScreen()" class="p-2 bg-rose-600/80 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold transition shrink-0 shadow" title="Giriş Ekranına Dön / Çıkış">
                 <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
               </button>
             </div>
+          </div>
 
+        </div>
+
+        <!-- 2. ALT SATIR: Hızlı Eylemler & Butonlar Çubuğu (Geniş ve Ferah) -->
+        <div class="flex items-center justify-between py-2 gap-2 flex-wrap">
+          
+          <!-- Sol Butonlar: Raporlar, Cihazlar, Ayarlar -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <!-- Gün Raporu Butonu -->
+            <button onclick="openDailyReportModal()" class="px-3 py-1.5 sm:py-2 bg-teal-600/90 hover:bg-teal-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow border border-teal-500/40 shrink-0 whitespace-nowrap" title="Günlük Faaliyet & Çekim Raporu">
+              <i data-lucide="file-text" class="w-4 h-4 text-white"></i>
+              <span>Gün Raporu</span>
+            </button>
+
+            <!-- Diğer Cihazlardan / Telefondan Aç Butonu -->
+            <button onclick="openPhoneConnectModal()" class="px-3 py-1.5 sm:py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md border border-blue-400/40 shrink-0 whitespace-nowrap" title="Başka Bilgisayardan veya Telefondan Aç">
+              <i data-lucide="share-2" class="w-4 h-4 text-white"></i>
+              <span>Diğer Cihazlardan Aç</span>
+            </button>
+
+            <!-- Şifre Değiştir -->
+            <button id="btnHeaderChangePass" onclick="openStandalonePasswordModal()" class="px-3 py-1.5 sm:py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow border border-amber-400/40 shrink-0 whitespace-nowrap" title="Reji & Müdür Şifresini Değiştir">
+              <i data-lucide="key" class="w-3.5 h-3.5 text-white"></i>
+              <span>Şifre Değiştir</span>
+            </button>
+
+            <!-- Yönetim & Ekipler -->
+            <button id="btnHeaderAdmin" onclick="openAdminPanelModal()" class="px-3 py-1.5 sm:py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-amber-900/30 shrink-0 whitespace-nowrap" title="Yönetim & Ekipler">
+              <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+              <span>Yönetim</span>
+            </button>
+          </div>
+
+          <!-- Sağ Butonlar: Yeni Kişi ve Yeni İş Ekleme (Öne çıkan ana butonlar) -->
+          <div class="flex items-center gap-2 flex-wrap ml-auto">
             <!-- Yeni Kişi / Personel Ekle -->
-            <button id="btnHeaderAddPerson" onclick="openAddPersonModal()" class="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 transition shadow-lg shadow-emerald-950/30 shrink-0 whitespace-nowrap" title="Yeni Kişi / Personel Ekle">
+            <button id="btnHeaderAddPerson" onclick="openAddPersonModal()" class="px-3.5 py-1.5 sm:py-2 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition shadow-lg shadow-emerald-950/30 shrink-0 whitespace-nowrap" title="Yeni Kişi / Personel Ekle">
               <i data-lucide="user-plus" class="w-4 h-4 text-white"></i>
               <span>+ Kişi Ekle</span>
             </button>
 
-            <!-- Yeni İş / Çekim Ekle -->
-            <button id="btnHeaderNewJob" onclick="openNewJobModal()" class="px-3.5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 transition shadow-lg shadow-amber-900/40 shrink-0 whitespace-nowrap">
+            <!-- Yeni İş & Çekim Ekle -->
+            <button id="btnHeaderNewJob" onclick="openNewJobModal()" class="px-4 py-1.5 sm:py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition shadow-lg shadow-amber-900/40 shrink-0 whitespace-nowrap">
               <i data-lucide="plus-circle" class="w-4 h-4 text-white"></i>
               <span>+ Yeni İş & Çekim Gir</span>
             </button>
           </div>
 
         </div>
+
       </div>
     </header>
 
@@ -357,32 +375,6 @@
           <i data-lucide="key-round" class="w-3.5 h-3.5 text-amber-600"></i>
           <span>Reji / Müdür Şifresiyle Giriş Yap</span>
         </button>
-      </div>
-    </div>
-
-    <!-- REJİ & MÜDÜRLER BİLGİ BANTI -->
-    <div class="bg-slate-900 text-white py-2 px-4 border-b border-slate-700 text-xs">
-      <div class="w-full max-w-[1920px] mx-auto flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          <div class="flex items-center gap-1.5 bg-amber-500/20 border border-amber-400/30 px-2.5 py-0.5 rounded-lg text-amber-200">
-            <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-400"></i>
-            <span class="font-bold">İş Veren Müdürler:</span>
-            <span>Hasan Hüseyin AKSAY • Bahtiyar BAKAR</span>
-          </div>
-          <div class="flex items-center gap-1.5 bg-indigo-500/20 border border-indigo-400/30 px-2.5 py-0.5 rounded-lg text-indigo-200">
-            <i data-lucide="sliders" class="w-3.5 h-3.5 text-indigo-300"></i>
-            <span class="font-bold">Reji Masası:</span>
-            <span>Levent AKYAYLA • Ahmet Can UYAR • Serhat IŞIKTAN</span>
-          </div>
-          <div class="flex items-center gap-1.5 bg-rose-500/20 border border-rose-400/30 px-2.5 py-0.5 rounded-lg text-rose-200">
-            <i data-lucide="mic" class="w-3.5 h-3.5 text-rose-300"></i>
-            <span class="font-bold">Spikerler:</span>
-            <span>Büşra Seda BOYAR • Şirin ERDOĞAN • Tolga YALÇINKAYA</span>
-          </div>
-        </div>
-        <div class="text-[11px] text-slate-300">
-          Reji ekibi işi girer; iş veren müdürü, spikeri, çekim ve kurgu ekibini seçip saatleri damgalar.
-        </div>
       </div>
     </div>
 
